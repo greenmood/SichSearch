@@ -4,7 +4,6 @@ from urllib.request import urlopen
 from urllib.error import HTTPError
 import os
 
-
 def getownedgames(apikey, steamid):
         url = ('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={}&steamid={}'.format(apikey, steamid))
         #response = json.loads(urlopen(url).read().decode('utf-8'))
@@ -35,23 +34,17 @@ def getplayersname(apikey,*steamids):
 def getimage(game):
     imageurl = 'http://cdn.steampowered.com/v/gfx/apps/{}/header.jpg'
     data = urlopen(imageurl.format(game['appid'])).read()
-    return ImageTk.PhotoImage(data=data)
+    return data
 
 
-def choosegame(games, tk, button, listbox):
+def choosegame(games):
     game = random.choice(games)
     try:
         game['image'] = getimage(game)
+        return game
     except HTTPError:
-        return choosegame(games, tk, button, listbox)
+        return None
 
-    button.configure(image=game['image'], command=lambda: playgame(game))
-    friends_with_game = friends_with_same_game(apikey,getfriends(apikey,steamid),game)
-    player_names = getplayersname(apikey, ",".join([player['steamid'] for player in friends_with_game]))
-    listbox.delete(0, tkinter.END)
-    for player_name in player_names:
-        listbox.insert(tkinter.END,player_name)
-    tk.title(game['name'])
 
 def friends_with_same_game(apikey,friends, game):
     same_game_friends = []
