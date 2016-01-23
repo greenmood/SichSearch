@@ -3,6 +3,7 @@ import random
 from urllib.request import urlopen
 from urllib.error import HTTPError
 import os
+from base64 import b64encode
 
 def getownedgames(apikey, steamid):
         url = ('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={}&steamid={}'.format(apikey, steamid))
@@ -33,14 +34,17 @@ def getplayersname(apikey,*steamids):
 
 def getimage(game):
     imageurl = 'http://cdn.steampowered.com/v/gfx/apps/{}/header.jpg'
-    data = urlopen(imageurl.format(game['appid'])).read()
-    return data
+    image = urlopen(imageurl.format(game['appid']))
+    print(imageurl.format(game['appid']))
+    #return image
+    return imageurl.format(game['appid'])
 
 
 def choosegame(games):
     game = random.choice(games)
     try:
-        game['image'] = getimage(game)
+        image = getimage(game)
+        game['image'] = image
         return game
     except HTTPError:
         return None
