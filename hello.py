@@ -3,7 +3,7 @@ from flask import Flask
 from flask import request
 from steamapi import getownedgames
 from steamapi import choosegame
-import urllib
+import os
 
 app = Flask(__name__)
 
@@ -16,10 +16,19 @@ def hello():
 @app.route('/', methods=['POST'])
 def handleSteamid():
     steamid = request.form["steamid"]
-    games = getownedgames('1EDB5F832945E4C16CCB727EE9394235', steamid)
+    apikey = getApiKey()
+    games = getownedgames(apikey, steamid)
     game = choosegame(games)
     image = game["image"]
     return render_template('hello.html', image=image)
+
+
+def getApiKey():
+    if os.path.isfile('apikey.txt'):
+        f = open('apikey.txt', 'r')
+        apikey = f.read().splitlines()[0]
+        print(apikey)
+        return apikey
 
 
 if __name__ == "__main__":
