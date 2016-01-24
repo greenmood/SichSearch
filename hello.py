@@ -16,11 +16,15 @@ def hello():
 @app.route('/', methods=['POST'])
 def handleSteamid():
     steamid = request.form["steamid"]
-    apikey = getApiKey()
-    games = getownedgames(apikey, steamid)
-    game = choosegame(games)
-    image = game["image"]
-    return render_template('hello.html', image=image)
+    REQUIRED_STEAMID_LENGTH = 17
+    if len(steamid) != REQUIRED_STEAMID_LENGTH:
+        return render_template('hello.html') + "Wrong SteamID"
+    else:
+        apikey = getApiKey()
+        games = getownedgames(apikey, steamid)
+        game = choosegame(games)
+        image = game["image"]
+        return render_template('hello.html', image=image)
 
 
 def getApiKey():
